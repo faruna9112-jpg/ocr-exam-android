@@ -1,7 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.ocrexa">
 
-    <!-- ДОЗВОЛИ -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.CAMERA"/>
 
@@ -9,7 +8,6 @@
         android:label="OCR Exam"
         android:allowBackup="true">
 
-        <!-- ГОЛОВНИЙ ЕКРАН -->
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -17,14 +15,12 @@
             </intent-filter>
         </activity>
 
-        <!-- ЕКЗАМЕН-ЕКРАН (KIOSK) -->
         <activity
             android:name=".FormActivity"
             android:lockTaskMode="if_whitelisted"/>
 
-        <!-- КАМЕРА -->
         <activity android:name=".CameraActivity"/>
+        <activity android:name=".OcrResultActivity"/>
 
     </application>
-
 </manifest>
