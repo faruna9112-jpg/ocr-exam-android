@@ -1,24 +1,30 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.ocrexa">
 
-    <!-- ДОЗВІЛ НА ІНТЕРНЕТ -->
+    <!-- ДОЗВОЛИ -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
-    android:label="OCR Exam"
-    android:allowBackup="true">
+        android:label="OCR Exam"
+        android:allowBackup="true">
 
-    <!-- ГОЛОВНИЙ ЕКРАН (БЕЗ KIOSK) -->
-    <activity android:name=".MainActivity">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN"/>
-            <category android:name="android.intent.category.LAUNCHER"/>
-        </intent-filter>
-    </activity>
+        <!-- ГОЛОВНИЙ ЕКРАН -->
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
 
-    <!-- ЕКЗАМЕН-ЕКРАН (KIOSK УВІМКНЕНО) -->
-    <activity
-        android:name=".FormActivity"
-        android:lockTaskMode="if_whitelisted"/>
+        <!-- ЕКЗАМЕН-ЕКРАН (KIOSK) -->
+        <activity
+            android:name=".FormActivity"
+            android:lockTaskMode="if_whitelisted"/>
 
-</application>
+        <!-- КАМЕРА -->
+        <activity android:name=".CameraActivity"/>
+
+    </application>
+
+</manifest>
