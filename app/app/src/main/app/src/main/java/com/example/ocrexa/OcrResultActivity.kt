@@ -52,4 +52,30 @@ class OcrResultActivity : AppCompatActivity() {
                 append("\n\n====================\n\n")
 
                 append("✅ ЗНАЙДЕНО:\n")
-                if (result
+                if (result.found.isEmpty()) {
+                    append("— немає\n")
+                } else {
+                    result.found.forEach { append("✔ $it\n") }
+                }
+
+                append("\n❌ НЕ ЗНАЙДЕНО:\n")
+                if (result.missing.isEmpty()) {
+                    append("— немає\n")
+                } else {
+                    result.missing.forEach { append("✘ $it\n") }
+                }
+            }
+        }
+
+        container.addView(statusView)
+        container.addView(percentView)
+        container.addView(detailView)
+
+        val scroll = ScrollView(this).apply {
+            addView(container)
+        }
+
+        setContentView(scroll)
+        title = "Результат іспиту"
+    }
+}
