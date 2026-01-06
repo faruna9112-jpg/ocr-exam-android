@@ -10,11 +10,34 @@ class OcrResultActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val text = intent.getStringExtra("ocr_text") ?: "Текст не знайдено"
+        val ocrText = intent.getStringExtra("ocr_text") ?: ""
+        val result = AnswerChecker.check(ocrText)
+
+        val displayText = StringBuilder()
+
+        displayText.append("🔤 РОЗПІЗНАНИЙ ТЕКСТ:\n\n")
+        displayText.append(ocrText)
+        displayText.append("\n\n====================\n\n")
+
+        displayText.append("✅ ЗНАЙДЕНО:\n")
+        if (result.found.isEmpty()) {
+            displayText.append("— немає\n")
+        } else {
+            result.found.forEach { displayText.append("✔ $it\n") }
+        }
+
+        displayText.append("\n❌ НЕ ЗНАЙДЕНО:\n")
+        if (result.missing.isEmpty()) {
+            displayText.append("— немає\n")
+        } else {
+            result.missing.forEach { displayText.append("✘ $it\n") }
+        }
+
+        displayText.append("\n📊 РЕЗУЛЬТАТ: ${result.found.size} / ${result.found.size + result.missing.size}")
 
         val textView = TextView(this).apply {
-            this.text = text
-            textSize = 16f
+            text = displayText.toString()
+            textSize = 15f
             setPadding(24, 24, 24, 24)
         }
 
@@ -23,6 +46,6 @@ class OcrResultActivity : AppCompatActivity() {
         }
 
         setContentView(scrollView)
-        title = "Результат OCR"
+        title = "Перевірка результатів"
     }
 }
