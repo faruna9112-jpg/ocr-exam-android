@@ -9,6 +9,7 @@
         android:allowBackup="true">
 
         <activity android:name=".MainActivity">
+           android:lockTaskMode="if_whitelisted"
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
