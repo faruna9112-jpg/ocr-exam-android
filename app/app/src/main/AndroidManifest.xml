@@ -5,20 +5,20 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-        android:label="OCR Exam"
-        android:allowBackup="true">
+    android:label="OCR Exam"
+    android:allowBackup="true">
 
-        <activity android:name=".MainActivity">
-           android:lockTaskMode="if_whitelisted"
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
+    <!-- ГОЛОВНИЙ ЕКРАН (БЕЗ KIOSK) -->
+    <activity android:name=".MainActivity">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN"/>
+            <category android:name="android.intent.category.LAUNCHER"/>
+        </intent-filter>
+    </activity>
 
-        <!-- ЕКРАН GOOGLE FORM -->
-        <activity android:name=".FormActivity"/>
+    <!-- ЕКЗАМЕН-ЕКРАН (KIOSK УВІМКНЕНО) -->
+    <activity
+        android:name=".FormActivity"
+        android:lockTaskMode="if_whitelisted"/>
 
-    </application>
-
-</manifest>
+</application>
