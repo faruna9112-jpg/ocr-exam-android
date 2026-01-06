@@ -2,10 +2,16 @@ package com.example.ocrexa
 
 import android.graphics.Color
 import android.os.Bundle
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class OcrResultActivity : AppCompatActivity() {
 
@@ -16,16 +22,30 @@ class OcrResultActivity : AppCompatActivity() {
         val result = AnswerChecker.check(ocrText)
 
         val total = result.found.size + result.missing.size
-        val percent = if (total > 0) {
-            (result.found.size * 100) / total
-        } else {
-            0
-        }
-
+        val percent = if (total > 0) (result.found.size * 100) / total else 0
         val passed = percent >= 60
 
-        val statusText = if (passed) "✅ СКЛАВ" else "❌ НЕ СКЛАВ"
+        val statusText = if (passed) "СКЛАВ" else "НЕ СКЛАВ"
         val statusColor = if (passed) Color.parseColor("#2E7D32") else Color.parseColor("#C62828")
+
+        val reportText = buildString {
+            append("РЕЗУЛЬТАТ ІСПИТУ\n")
+            append("====================\n")
+            append("Статус: $statusText\n")
+            append("Результат: $percent%\n\n")
+
+            append("ЗНАЙДЕНО:\n")
+            if (result.found.isEmpty()) append("— немає\n")
+            else result.found.forEach { append("✔ $it\n") }
+
+            append("\nНЕ ЗНАЙДЕНО:\n")
+            if (result.missing.isEmpty()) append("— немає\n")
+            else result.missing.forEach { append("✘ $it\n") }
+
+            append("\n--------------------\n")
+            append("OCR ТЕКСТ:\n")
+            append(ocrText)
+        }
 
         val container = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
@@ -41,34 +61,24 @@ class OcrResultActivity : AppCompatActivity() {
         val percentView = TextView(this).apply {
             text = "Результат: $percent%"
             textSize = 20f
-            setPadding(0, 16, 0, 24)
+            setPadding(0, 16, 0, 16)
         }
 
         val detailView = TextView(this).apply {
-            textSize = 15f
-            text = buildString {
-                append("🔤 РОЗПІЗНАНИЙ ТЕКСТ:\n\n")
-                append(ocrText)
-                append("\n\n====================\n\n")
+            text = reportText
+            textSize = 14f
+        }
 
-                append("✅ ЗНАЙДЕНО:\n")
-                if (result.found.isEmpty()) {
-                    append("— немає\n")
-                } else {
-                    result.found.forEach { append("✔ $it\n") }
-                }
-
-                append("\n❌ НЕ ЗНАЙДЕНО:\n")
-                if (result.missing.isEmpty()) {
-                    append("— немає\n")
-                } else {
-                    result.missing.forEach { append("✘ $it\n") }
-                }
+        val saveBtn = Button(this).apply {
+            text = "Зберегти результат у файл"
+            setOnClickListener {
+                saveToFile(reportText)
             }
         }
 
         container.addView(statusView)
         container.addView(percentView)
+        container.addView(saveBtn)
         container.addView(detailView)
 
         val scroll = ScrollView(this).apply {
@@ -77,5 +87,24 @@ class OcrResultActivity : AppCompatActivity() {
 
         setContentView(scroll)
         title = "Результат іспиту"
+    }
+
+    private fun saveToFile(text: String) {
+        try {
+            val time = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
+                .format(Date())
+
+            val file = File(filesDir, "exam_result_$time.txt")
+            file.writeText(text)
+
+            Toast.makeText(
+                this,
+                "Файл збережено:\n${file.name}",
+                Toast.LENGTH_LONG
+            ).show()
+
+        } catch (e: Exception) {
+            Toast.makeText(this, "Помилка збереження", Toast.LENGTH_SHORT).show()
+        }
     }
 }
