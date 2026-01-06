@@ -1,6 +1,8 @@
 package com.example.ocrexa
 
+import android.graphics.Color
 import android.os.Bundle
+import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -13,39 +15,41 @@ class OcrResultActivity : AppCompatActivity() {
         val ocrText = intent.getStringExtra("ocr_text") ?: ""
         val result = AnswerChecker.check(ocrText)
 
-        val displayText = StringBuilder()
-
-        displayText.append("🔤 РОЗПІЗНАНИЙ ТЕКСТ:\n\n")
-        displayText.append(ocrText)
-        displayText.append("\n\n====================\n\n")
-
-        displayText.append("✅ ЗНАЙДЕНО:\n")
-        if (result.found.isEmpty()) {
-            displayText.append("— немає\n")
+        val total = result.found.size + result.missing.size
+        val percent = if (total > 0) {
+            (result.found.size * 100) / total
         } else {
-            result.found.forEach { displayText.append("✔ $it\n") }
+            0
         }
 
-        displayText.append("\n❌ НЕ ЗНАЙДЕНО:\n")
-        if (result.missing.isEmpty()) {
-            displayText.append("— немає\n")
-        } else {
-            result.missing.forEach { displayText.append("✘ $it\n") }
-        }
+        val passed = percent >= 60
 
-        displayText.append("\n📊 РЕЗУЛЬТАТ: ${result.found.size} / ${result.found.size + result.missing.size}")
+        val statusText = if (passed) "✅ СКЛАВ" else "❌ НЕ СКЛАВ"
+        val statusColor = if (passed) Color.parseColor("#2E7D32") else Color.parseColor("#C62828")
 
-        val textView = TextView(this).apply {
-            text = displayText.toString()
-            textSize = 15f
+        val container = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
             setPadding(24, 24, 24, 24)
         }
 
-        val scrollView = ScrollView(this).apply {
-            addView(textView)
+        val statusView = TextView(this).apply {
+            text = statusText
+            textSize = 28f
+            setTextColor(statusColor)
         }
 
-        setContentView(scrollView)
-        title = "Перевірка результатів"
-    }
-}
+        val percentView = TextView(this).apply {
+            text = "Результат: $percent%"
+            textSize = 20f
+            setPadding(0, 16, 0, 24)
+        }
+
+        val detailView = TextView(this).apply {
+            textSize = 15f
+            text = buildString {
+                append("🔤 РОЗПІЗНАНИЙ ТЕКСТ:\n\n")
+                append(ocrText)
+                append("\n\n====================\n\n")
+
+                append("✅ ЗНАЙДЕНО:\n")
+                if (result
